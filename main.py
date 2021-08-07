@@ -6,19 +6,20 @@
 # If Bakkes Mod doesn't have time to open and get ready to inject before rocket league opens please raise `BAKKES_MOD_OPEN_BUFFER`
 # If Bakkes Mod closes before Rocket League opens raise `ROCKET_LEAGUE_OPEN_BUFFER`
 
-from subprocess import Popen, call, check_output
+from subprocess import Popen, check_output
 from time import sleep
 from os.path import isfile
+from os import startfile
 
 # ==========
 # Constants
 # ==========
 BAKKES_MOD_PATH = "C:/Program Files/BakkesMod/BakkesMod.exe"
-ROCKET_LEAGUE_PATH = "C:/Program Files (x86)/Steam/steamapps/common/rocketleague/Binaries/Win64/RocketLeague.exe"
+ROCKET_LEAGUE_PATH = "C:/Program Files/BakkesMod/launch_rl.url"
 BAKKAS_MOD_PROCESS_NAME = "BakkesMod.exe"
 ROCKET_LEAGUE_PROCESS_NAME = "RocketLeague.exe"
-BAKKES_MOD_OPEN_BUFFER = 0
-ROCKET_LEAGUE_OPEN_BUFFER = 120
+BAKKES_MOD_OPEN_BUFFER = 2
+ROCKET_LEAGUE_OPEN_BUFFER = 10
 ROCKET_LEAGUE_CLOSED_CHECK_DLEAY = 5
 DEBUG_PRINT = False
 
@@ -60,7 +61,7 @@ def runBakkesMod():
 
 def runRocketLeague():
 	# Open
-	call(ROCKET_LEAGUE_PATH)
+	Popen(ROCKET_LEAGUE_PATH, shell=True)   
 	debugPrint("Opening Rocket League")
 	sleep(ROCKET_LEAGUE_OPEN_BUFFER)
 
@@ -72,7 +73,7 @@ def runRocketLeague():
 
 def process_exists(process_name):
     call = 'TASKLIST', '/FI', 'imagename eq %s' % process_name
-    output = check_output(call).decode()
+    output = check_output(call, shell=True).decode()
     last_line = output.strip().split('\r\n')[-1]
     return last_line.upper().startswith(str(process_name).upper())
 
