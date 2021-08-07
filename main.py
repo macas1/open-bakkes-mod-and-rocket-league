@@ -8,6 +8,7 @@
 
 from subprocess import Popen, call, check_output
 from time import sleep
+from os.path import isfile
 
 # ==========
 # Constants
@@ -17,7 +18,7 @@ ROCKET_LEAGUE_PATH = "C:/Program Files (x86)/Steam/steamapps/common/rocketleague
 BAKKAS_MOD_PROCESS_NAME = "BakkesMod.exe"
 ROCKET_LEAGUE_PROCESS_NAME = "RocketLeague.exe"
 BAKKES_MOD_OPEN_BUFFER = 0
-ROCKET_LEAGUE_OPEN_BUFFER = 5
+ROCKET_LEAGUE_OPEN_BUFFER = 120
 ROCKET_LEAGUE_CLOSED_CHECK_DLEAY = 5
 DEBUG_PRINT = False
 
@@ -25,15 +26,32 @@ DEBUG_PRINT = False
 # Functions
 # ==========
 def main():
-	if process_exists(ROCKET_LEAGUE_PROCESS_NAME):
-		print('Rocket League is already running.')
+	if not preRunCheck():
+		input("Press enter to continue. ")
 		return
 
 	bm = runBakkesMod()
 	runRocketLeague()
 	bm.kill()
 	debugPrint("Bakkes Mod killed\nDone")
-		
+	
+def preRunCheck():
+	passed = True
+
+	if not isfile(ROCKET_LEAGUE_PATH):
+		print("Rocket League doesn't exist at given path.")
+		passed = False
+
+	if not isfile(BAKKES_MOD_PATH):
+		print("Bakkes Mod doesn't exist at given path.")
+		passed = False
+
+	if process_exists(ROCKET_LEAGUE_PROCESS_NAME):
+		print("Rocket League is already running.")
+		passed = False
+
+	return passed
+	
 def runBakkesMod():
 	bm = Popen(BAKKES_MOD_PATH)
 	debugPrint("Opening Bakkes Mod")
